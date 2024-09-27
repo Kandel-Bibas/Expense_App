@@ -1,2 +1,6 @@
 .DS_Store
 .idea
+
+#double astreisk to remove obj and bin from children folders
+**/obj/   
+**/bin/
