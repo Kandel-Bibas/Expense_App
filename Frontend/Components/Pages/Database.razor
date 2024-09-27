@@ -1,0 +1,60 @@
+@page "/Sheets"
+@attribute [StreamRendering]
+
+<PageTitle>Sheets</PageTitle>
+
+@if (expenseInfo == null)
+{
+    <p>No Data found. Searching...</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Date</th>
+            <th>Detail</th>
+            <th>Amount</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var info in expenseInfo)
+        {
+        <tr>
+            <td>@info.Date</td>
+            <td>@info.Detail</td>
+            <td>@info.Amount</td>
+        </tr>
+        }
+        </tbody>
+    </table>
+}
+
+@code{
+    private Sheets[]? expenseInfo;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Task.Delay(200);
+
+        var startDate = DateOnly.FromDateTime(DateTime.Now);
+        var details = new[] { "Walmart", "Targett", "Movie Tickets", "Hospital bills", "Groceries", "Phone bills" };
+        var amounts = new[] { 123.03, 234.07, 99.25, 2300.38, 200.69, 115.38 };
+
+        expenseInfo = Enumerable.Range(1, 6).Select(index => new Sheets
+        {
+            Date = startDate.AddDays(index),
+            Detail = details[index-1],
+            Amount = amounts[index-1]
+        }).ToArray();
+    }
+
+    private class Sheets
+    {
+        public DateOnly Date { get; set; }
+        public string? Detail { get; set; }
+        public double Amount { get; set; }
+        // public float Balance { get; set; }
+    }
+
+}
