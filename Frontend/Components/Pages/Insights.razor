@@ -1,0 +1,47 @@
+@page "/insights"
+@using System.Runtime.InteropServices.JavaScript
+
+<PageTitle>Insights</PageTitle>
+
+@if (dailyReport == null)
+{
+    <p>No Report</p>
+}
+else
+{
+    @foreach (var report in dailyReport)
+    {
+        <p>Day: @report.DayofWeek</p>
+        <p>Expense: @report.ExpenseAmount <div style="width: @(@report.ExpenseAmount/10)px; border:2px solid red"></div></p>
+    }
+}
+
+@code{
+
+    private ExpenseReport[]? dailyReport;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Task.Delay(100);
+        var startdate = DateTime.Today;
+        var amounts = new[] { 123.03, 234.07, 99.25, 2300.38, 200.69, 115.38, 264.45 };
+        dailyReport = Enumerable.Range(1, 7).Select(index =>
+        {
+            DateTime day = startdate.AddDays(index);
+            var report = new ExpenseReport
+            {
+                DayofWeek = day.ToString("ddd"),
+                ExpenseAmount = amounts[index - 1]
+            };
+            return report;
+        }).ToArray();
+        
+    }
+    
+    private class ExpenseReport
+    {
+        public string DayofWeek { get; set; }
+        public double ExpenseAmount { get; set; }
+    }
+}  
+
