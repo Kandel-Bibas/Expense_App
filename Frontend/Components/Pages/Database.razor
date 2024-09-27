@@ -1,0 +1,79 @@
+@page "/Sheets"
+@attribute [StreamRendering]
+
+<PageTitle>Sheets</PageTitle>
+
+@if (expenseInfo == null)
+{
+    <p>No Data found. Searching...</p>
+}
+else
+{
+    <div class="d-flex justify-content-center">
+    <table style = "--bs-table-accent-bg: #bfc1ff; border-radius: 100px" class="table">
+        <thead>
+        <tr>    
+            <th style = "width: 20%" class = "text-center">Date</th>
+            <th style = "width: 20%" class = "text-center">Detail</th>
+            <th style = "width: 35%" class ="d-flex">
+                <div >Amount</div>
+                <div style="font-size: 0.80em; opacity: 90%; margin-left: 8%;" class="text-muted">Balance</div>
+            </th>
+        </tr>
+        </thead>
+        <tbody>
+        @for (int i = (expenseInfo.Length - 1); i >=0 ; i--)
+        {
+            var info = expenseInfo[i];
+            <tr>
+                <td class = "text-center">@info.Date</td>
+                <td class = "text-center">@info.Detail</td>
+                <td style = "width: 35%" class = "d-flex">
+                    <div>$@info.Amount</div>
+                    <div style="font-size: 0.80em; opacity: 90%; margin-left: 8%" class="text-muted ">$@info.Balance.ToString("#.#0")</div>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+    </div>
+}
+
+@code{
+    private Sheets[]? expenseInfo;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Task.Delay(200);
+
+        var startDate = DateOnly.FromDateTime(DateTime.Now);
+        var details = new[] { "Walmart", "Targett", "Movie Tickets", "Hospital bills", "Groceries", "Phone bills" };
+        var amounts = new[] { 123.03, 234.07, 99.25, 2300.38, 200.69, 115.38 };
+        var balance = 7000.00;
+
+        var currentBalance = balance;
+
+        expenseInfo = Enumerable.Range(1, 6).Select(index =>
+        {
+            var sheet =  new Sheets
+            {
+                Date = startDate.AddDays(index),
+                Detail = details[(details.Length) - index],
+                Amount = amounts[(amounts.Length) - index]
+            };
+
+            currentBalance -= amounts[index - 1];
+            sheet.Balance = currentBalance;
+            return sheet;
+        }).ToArray();
+    }
+
+    private class Sheets
+    {
+        public DateOnly Date { get; set; }
+        public string? Detail { get; set; }
+        public double Amount { get; set; }
+        public double Balance;
+    }
+
+}
